@@ -1,0 +1,435 @@
+ObjectFactories.TRADE_FACTORY 
+and   public static final com.citi.ficc.esb.trade.ObjectFactory TRADE_FACTORY = 
+        new com.citi.ficc.esb.trade.ObjectFactory();
+so that u can  get different kinds of ObjectFactory
+
+@@@@@@@@
+private List<VersionedEventId> getAllVersionedEventIds(final String eventId) {
+		return (List<VersionedEventId>) getJdbcTemplate()
+				.query(
+						"select EVENT_ID, EVENT_VERSION from RATES_BUSINESS_EVENT where EVENT_ID = ? order by EVENT_VERSION",
+						new Object[] { eventId }, new RowMapper() {
+
+							@Override
+							public Object mapRow(ResultSet resultSet, int arg1) throws SQLException {
+								VersionedEventId versionedEventId = ObjectFactories.TRADE_FACTORY.createVersionedEventId();
+								versionedEventId.setValue(eventId);
+								int version= resultSet.getInt("EVENT_VERSION");								
+								versionedEventId.setVersion(version);
+								return versionedEventId;
+							}							
+						});
+	}
+
+在/home/admin/test/下新建test.sh内容如下： 
+cd `dirname $0`
+echo `pwd`
+然后返回到/home/admin/执行 
+sh test/test.sh
+运行结果: 
+/home/admin/test
+
+Calendar c1 = new GregorianCalendar(TimeZone.getTimeZone("GMT-11:00") );
+		 Calendar c2 = new GregorianCalendar(TimeZone.getTimeZone("GMT-11:00") );
+	     
+c1.getTimeZone will equals to timezone of c2, so u can use time zone equals()
+
+c1.get(Calendar.DATE) gets date
+
+if u change calendar by timemills, dont forget change the Calendar.ZOne_offset by using getrawoffset
+
+can get how many beans u loaded to spring.
+GenericApplicationContext ctx = new GenericApplicationContext();
+		ctx.getDefaultListableBeanFactory().setAllowBeanDefinitionOverriding(false);
+
+		XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
+		int totalBeanCount = 0;
+		List<Resource> processedResources = new ArrayList<Resource>(resources.length);
+		for(Resource r:resources)
+		{
+			try
+			{
+				int loadedBeanCount = xmlReader.loadBeanDefinitions(r);
+
+
+ApplicationContext appContext
+
+Map<String,? extends T> ctxBeans =appContext.getBeansOfType(type,includePrototypes ,allowEagerInit)
+ctxBeans.values() can get specific beans u want
+
+domainApplicationContext.getBeanNamesForType
+
+BeanDefinition def=ApplicationContext.getBeanDefinition(beanName);
+def.getScope().equals(ConfigurableBeanFactory.SCOPE_PROTOTYPE);
+
+
+linux,function is a command, use $? to get return value.
+local 变量=值 ，这时变量就是内部变量，它的修改，不会影响函数外部variable
+
+
+
+new org.springframework.jdbc.core.SqlInOutParameter(getName(), getType()) type is the OracleTypes.varchar. is an int
+
+ToStringBuilder.reflectionToString(o) has fields.
+
+extends org.custommonkey.xmlunit.XMLTestCase, can have assert for xmls
+in fact they r from xmlunit.compareXML()
+
+breakpoint is a point just put in the previous file, if add new line, they will still be in situ.
+
+bat will decide which one is the parameter by space. pls remember
+
+mvn surefire-report:report and in the target/site, it has a html tells me everything
+/target/surefire-reports/ has details
+
+
+<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			        <version>2.13</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.13</version>
+					</dependency>
+				</dependencies>
+
+				<configuration>
+					<reportNameSuffix>${project.artifactId}</reportNameSuffix>
+					<argLine>-Dfile.encoding=UTF-8 -javaagent:${settings.localRepository}/org/springframework/spring-agent/${spring-version}/spring-agent-${spring-version}.jar -Xmx768m -XX:MaxPermSize=512m -ea</argLine>
+				<!--	<groups>${tests.to.run}</groups> -->
+					<testFailureIgnore>true</testFailureIgnore>
+					<excludedGroups>xxxx.IntegrationTest</excludedGroups>
+				</configuration>
+			</plugin>
+
+
+<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.13</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+Failsafe plugin will look for **/IT*.java, **/*IT.java,and **/*ITCase.java.  and never fail build when errors happened in mvn install.
+ if u add failsafe plugin in pom, the integration-test will happen after packaging, but surefile will run before packaging.
+
+from below on......................................................
+
+
+
+
+spring procedure
+	<util:constant id="SQL.VARCHAR" static-field="oracle.jdbc.OracleTypes.VARCHAR" />
+
+xxx extends StoredProcedure
+execute((Map)null).get(SqlOutParameter.RESULT);
+SqlOutParameter.RESULT is a string.
+
+
+public xxxxx  getValue() 
+	{
+		return this;
+	}
+
+
+
+
+
+
+protected Connection unwrapIfNecessary(Connection con)
+	{
+		if(con instanceof DelegatingConnection)
+		{
+			return ((DelegatingConnection)con).getDelegate();
+		}
+
+		return con;
+	}
+
+
+return new AbstractDisposableSqlTypeValue() 
+		{
+
+ 
+protected Object createTypeValue(Connection con, int sqlType, String typeName) throws SQLException 
+			{
+				StructDescriptor typeDescriptor = null;
+				try
+				{
+					typeDescriptor = StructDescriptor.createDescriptor(customType, unwrapIfNecessary(con));
+				}
+				catch(SQLException e)
+				{
+					logger.error("could not create type: " + customType, e);
+					throw e;
+				}
+				STRUCT[] trades = new STRUCT[objectList.size()];
+				for( int i = 0 ; i < objectList.size(); i++ ) {
+					Object attributes[] = objectMapper.objectToAttributes(typeDescriptor,( objectList.get(i) ),i);
+					Object[] newAttributes = replaceBLOBAndCLOBs(unwrapIfNecessary(con), attributes, typeDescriptor);
+					trades[i] = new STRUCT(typeDescriptor, unwrapIfNecessary(con), newAttributes);
+				}
+				String createCustomArrayTypeName = customArrayType;
+				if(createCustomArrayTypeName == null)
+				{
+					createCustomArrayTypeName = createCustomArrayTypeName(customType);
+				}
+				ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor(createCustomArrayTypeName, unwrapIfNecessary(con));
+
+				return new ARRAY(arrayDescriptor, unwrapIfNecessary(con), trades);
+			}
+
+
+
+
+
+
+apache httpclients can read content from url,and https as well.
+@IGnore can pass junit test
+
+f [-d $1]  
+    这个的意思是 从外面传一个参数给$1  -d是判断$!这个目录存不存在
+    所以你要穿的参数如果是正确的文件目录名,则此时的判断值为0  即真
+ 
+2  帮你拓展下:
+ 
+   [ -f   判断参数 ]  判断一个普通文件是不是存在
+  
+  [   -s   文件名 ]   文件存在且内容非空 即必须要一个空格以上的字符
+ 
+   [  -e    文件目录 ]  文件目录下是否不为空
+
+maven resolving out of memory ,set MAVEN_OPTS= -Xms128m -Xmx512m
+
+
+启动参数里加上 -Dfile.encoding="UTF-8" is setproperty before jvm main function. if u write them in codes, may be later than in vm arguments.
+
+publishevent means event happened.will trigger onApplicationEvent()
+
+jobs fg bg 1 ctrl+z.
+vi :! command can dont exit from vi.
+find / -name *abc
+find / -user user1 #查找user1的所有文件
+which：在$PATH范围内查找
+chmod u=rwx,g=rw,o=r abc
+
+http://www.iteye.com/news/25595
+
+&1代表标准输出定向到的地方
+&2 出错定向的地方,
+1>什么就是标准到什么,2>是错误输出到什么的意思
+
+taskkill /f /t /im java.exe
+
+<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xxxxs</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+			<version>${project.version}</version>            
+		</dependency> 
+
+
+classifier is in order to use src/test/java.
+scope is provided, is prepared for test and main, but never jar .
+
+
+if eclipse build has gone wrong, use mvn. when happened in debugging.
+build a maven launcher.can select by variable, like {project_loc} can get your absolute path for your select resource
+
+to override some of the system jdk api, we use java endorsed standard override  mechanism, we use the $JAVA_HOME/jre/lib/endorsed to hold the jar which u want to use to override the stuff from system.
+ 
+-Djava.endorsed.dirs can assign a directory. like xercesimpl
+
+if u want to use show annotation, need to right click on list of show history.
+
+
+
+
+<build>
+		<resources>
+			<resource>
+				<!-- this is relative to the pom.xml directory -->
+				<directory>${basedir}</directory>
+				<excludes>
+					<exclude>target/**</exclude>
+				</excludes>
+				<includes>
+					<include>*/**</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+
+
+Maven buildin parameters
+${basedir}   related with pom.xml
+${project.build.directory}  ----target
+${project.build.outputDirectory} -----target/classes
+${project.build.finalName} -----${project.artifactId}-${project.version}
+${project.packaging}  -----ar
+${project.xxx} 当前pom文件的任意节点的内容
+
+xxx implements  InitializingBean{}
+@Override
+	public void afterPropertiesSet() throws Exception {
+		this.executor = Executors.newFixedThreadPool(this.poolSize); //p:poolSize="33"
+		
+	}
+jmsconnection.createSession(paramA,paramB); 
+paramA is transaction
+paramB is acknowledgemode, acknowledge is like u  delete message from server.
+
+	QueueBrowser queueBrowser = session.createBrowser(queue);
+				int msgCount = Collections.list(queueBrowser.getEnumeration()).size();
+				queueBrowser.close();
+
+
+
+${a:0:5} cut a from 0 to 4
+Ctrl+w:  delete whole line u print
+Ctrl+a： （a：ahead）
+Ctrl+s: scroll the screen
+Ctrl+q: quit scroll
+
+
+FUNCTION BLOB_TO_CLOB (blob_in IN BLOB)
+RETURN CLOB
+AS
+	v_clob    CLOB;
+	v_varchar VARCHAR2(32767);
+	v_start	 PLS_INTEGER := 1;
+	v_buffer  PLS_INTEGER := 32767;
+BEGIN
+  IF (blob_in is null) THEN
+    v_clob :=null;
+  ELSE  
+    DBMS_LOB.CREATETEMPORARY(v_clob, TRUE);
+    FOR i IN 1..CEIL(DBMS_LOB.GETLENGTH(blob_in) / v_buffer)
+    LOOP
+       v_varchar := UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(blob_in, v_buffer, v_start));
+       DBMS_LOB.WRITEAPPEND(v_clob, LENGTH(v_varchar), v_varchar);
+       v_start := v_start + v_buffer;
+    END LOOP;
+	END IF;
+   RETURN v_clob;
+  
+END BLOB_TO_CLOB;
+
+
+
+
+du -hs xxx  --clear presentation and sum
+du -c ---show respective and sum
+du -Dkh  --max-depth=1    -----show just one sub dir  ,k --kb,  D --linked resouce's size
+ sort -n -k 2 -t : facebook.txt ---k:column,   -t : shows that : is delimiter,
+-b :sort from the first visible character
+find $HOME -type f -atime +7: not read over 7 days, if -7 is less than 7days
+find $HOME -name '*.mp3'
+find /etc -iname 'Network' --no sensitive case
+find $HOME -type f -amin +10   ---minutes
+find /tmp -type f -atime +30 -print -exec rm -f '{}' \;     print: is argument for find show
+
+find .  -type f -atime +30  -exec ls '{}' \;  
+find /tmp -type f -print0 | xargs -0 rm -v    ;   0:null delimiter,  v--show
+find /usr/local -user user1 -o -user user2   -o is and
+find . -name *.XC -mount -print   mount : local file system. dont enter other system.
+bbbbbbbbbbbIntegerCache.cache[i + 128]b
+
+IntegerCache.cache[i + 128]
+
+ IntegerCache.high
+
+spool is write log to printconcole or file.
+OUT = OFF + PRINT
+
+@命令的功能与start命令类似，区别在于@命令既可以在SQL*Plus中运行又可以在系统命令提示符中运行，而start命令只能在SQL*Plus里运行。without extension, default to .sql
+
+insert into (select object_name,object_type from xxx where object_id<1000 with check option)
+   values('testbyhao','testtype');   if has with check option, if u want to insert into the view, u must comform to where condition
+
+or will break the index on that column, so field=nn or field is null should not use or.
+
+sql developer to press f10 to c explain plan.
+-XX:+DisableExplicitGC   System.gc()调用转换成一个空操作
+ http://blog.csdn.net/sfdev/article/details/2063464
+http://chenchendefeng.iteye.com/blog/455883
+http://www.javazh.cn
+
+eclipse---installed jre, default argument is set for the code running jvm 
+
+bbbb
+alt_shift+b   open spring beans
+ctrl_shift-g  open reference.
+
+maven settings.xml  <id>...  is for find u a passwd and username to repository
+snapshot is regarding to release (stable). that means unstable.
+snapshot jars will be deployed to repository and will be downloaded the latest version of that jar for others to use.
+
+pushd will interfere the cd of the java file. especially for relative directory
+
+velocity.
+u can put object like array in context 
+      #foreach (${foo} in $array) to invoke.
+	#set($aa = ${count} + ${foo}) just a string concatenation, and aa can not be written as ${aa}
+
+jms 如果发送一个non persistent消息, 而刚好这个时候没有消费者在监听, 这个消息也会丢失
+
+velocity getTemplate()默认从ｊａｒ包里取is by taking below
+ velocityEngine.setProperty("resource.loader", "class");    
+   velocityEngine.setProperty("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+user dont define path ,then the classload is called systemclassloader, if use urlclassloader to get a classloader is user-defined classloader.
+different classloaders can  use related classloader to visit the class within them.
+
+
+<plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>${jaxbPluginVersion}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaDirectory>../../schema</schemaDirectory>
+          <schemaFiles>t -0.xsd,tr 1-0.xsd</schemaFiles>
+          <bindingDirectory>src/main/resources/xjb</bindingDirectory>
+          <bindingFiles>${irs.xjb.files}</bindingFiles>
+          <outputDirectory>${jaxb.generated.sources}</outputDirectory>
+          <extension>true</extension>
+          <verbose>true</verbose>
+	  <arguments>-Xaccess-control</arguments>
+        </configuration>
+        <dependencies>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>${xercesImplVersion}</version>
+			</dependency>
+          <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxbVersion}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>${jaxbVersion}</version>
+          </dependency>
+          <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jaxb-access-control</artifactId>
+            <version>${jaxbAccessControlVersion}</version>
+          </dependency>	
+        </dependencies>
+      </plugin>
+
+
